@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import { useTheme } from '../context/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 
-function Header() {
+function Header({ onPlayGame }) {
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // const { isDark } = useTheme();
@@ -62,6 +62,14 @@ function Header() {
 
           {/* Theme Toggle */}
           <ThemeToggle />
+
+          <button
+            onClick={onPlayGame}
+            className="px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-smooth hover:scale-105 hover:shadow-lg"
+            style={{ background: 'linear-gradient(135deg, #f59e0b, #ef4444)' }}
+          >
+            🎮 Game
+          </button>
 
           <a
             href="#contact"

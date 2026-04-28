@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IMAGES } from '../constants/images';
 
-function Hero() {
+function Hero({ onPlayGame }) {
   const [scrollY, setScrollY] = useState(0);
   const sectionRef = useRef(null);
 
@@ -95,6 +95,16 @@ function Hero() {
           >
             Tentang Kami
           </a>
+          <button
+            onClick={onPlayGame}
+            className="px-8 py-4 rounded-full font-semibold text-white transition-smooth hover:scale-105"
+            style={{
+              background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+              boxShadow: '0 0 24px rgba(245,158,11,0.35)',
+            }}
+          >
+            🎮 Main Game
+          </button>
         </div>
       </div>
 

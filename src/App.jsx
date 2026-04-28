@@ -10,25 +10,33 @@ import About from './components/About';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import GamePage from './game/GamePage';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [showGame, setShowGame] = useState(false);
 
   return (
     <ThemeProvider>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+
+      {/* Game overlay — full screen, di atas website */}
+      {showGame && (
+        <GamePage onHome={() => setShowGame(false)} />
+      )}
+
+      {/* Website utama */}
       <div
         className="overflow-x-hidden"
         style={{
           background: 'var(--bg-base)',
           color: 'var(--text-primary)',
-          // Cegah scroll saat splash aktif
           overflow: showSplash ? 'hidden' : undefined,
           height: showSplash ? '100vh' : undefined,
         }}
       >
-        <Header />
-        <Hero />
+        <Header onPlayGame={() => setShowGame(true)} />
+        <Hero onPlayGame={() => setShowGame(true)} />
         <Stats />
         <Products />
         <Ingredients />
