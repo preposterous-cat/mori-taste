@@ -3,21 +3,19 @@ import { INGREDIENTS, JUNK_FOODS, GAME_CONFIG } from './gameConfig';
 
 const {
   ITEM_SIZE,
-  INITIAL_SPEED,
   SPAWN_INTERVAL_MS,
   JUNK_PROBABILITY,
-  BASKET_SPEED_RATIO,
 } = GAME_CONFIG;
 
 // px per detik (bukan per frame) — konsisten di semua device
-const BASE_SPEED_PPS   = 180;   // kecepatan awal: 180px/detik
-const MAX_SPEED_PPS    = 520;   // batas atas
-const ACCEL_PPS2       = 12;    // percepatan: +12px/detik setiap detik
+const BASE_SPEED_PPS = 180;   // kecepatan awal: 180px/detik
+const MAX_SPEED_PPS = 520;   // batas atas
+const ACCEL_PPS2 = 12;    // percepatan: +12px/detik setiap detik
 
 function spawnItem(arenaWidth) {
   const isJunk = Math.random() < JUNK_PROBABILITY;
-  const pool   = isJunk ? JUNK_FOODS : INGREDIENTS;
-  const tmpl   = pool[Math.floor(Math.random() * pool.length)];
+  const pool = isJunk ? JUNK_FOODS : INGREDIENTS;
+  const tmpl = pool[Math.floor(Math.random() * pool.length)];
   return {
     id: Math.random().toString(36).slice(2),
     ...tmpl,
@@ -29,15 +27,15 @@ function spawnItem(arenaWidth) {
 
 export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange }) {
   const stateRef = useRef({
-    items:     [],
-    basketX:   0,
-    speedPPS:  BASE_SPEED_PPS,
-    keys:      { left: false, right: false },
+    items: [],
+    basketX: 0,
+    speedPPS: BASE_SPEED_PPS,
+    keys: { left: false, right: false },
     lastSpawn: 0,
     lastFrame: 0,
-    running:   false,
-    basket:    {},
-    frameId:   null,
+    running: false,
+    basket: {},
+    frameId: null,
   });
 
   // Ukuran arena — diupdate oleh ResizeObserver
@@ -65,32 +63,32 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
   // ── Keyboard ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const dn = (e) => {
-      if (e.key === 'ArrowLeft')  stateRef.current.keys.left  = true;
+      if (e.key === 'ArrowLeft') stateRef.current.keys.left = true;
       if (e.key === 'ArrowRight') stateRef.current.keys.right = true;
     };
     const up = (e) => {
-      if (e.key === 'ArrowLeft')  stateRef.current.keys.left  = false;
+      if (e.key === 'ArrowLeft') stateRef.current.keys.left = false;
       if (e.key === 'ArrowRight') stateRef.current.keys.right = false;
     };
     window.addEventListener('keydown', dn);
-    window.addEventListener('keyup',   up);
+    window.addEventListener('keyup', up);
     return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
   }, []);
 
   // ── Touch / Mouse drag ────────────────────────────────────────────────────
-  const touchStartX   = useRef(null);
-  const touchBasketX  = useRef(0);
+  const touchStartX = useRef(null);
+  const touchBasketX = useRef(0);
 
   const handleTouchStart = useCallback((clientX) => {
-    touchStartX.current  = clientX;
+    touchStartX.current = clientX;
     touchBasketX.current = stateRef.current.basketX;
   }, []);
 
   const handleTouchMove = useCallback((clientX) => {
     if (touchStartX.current === null) return;
     const { width } = arenaSize.current;
-    const basketW   = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
-    const dx        = clientX - touchStartX.current;
+    const basketW = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
+    const dx = clientX - touchStartX.current;
     stateRef.current.basketX = Math.max(0, Math.min(width - basketW, touchBasketX.current + dx));
   }, []);
 
@@ -99,10 +97,10 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
   // ── Main loop ─────────────────────────────────────────────────────────────
   const startLoop = useCallback(() => {
     const s = stateRef.current;
-    s.running   = true;
-    s.items     = [];
-    s.speedPPS  = BASE_SPEED_PPS;
-    s.basket    = {};
+    s.running = true;
+    s.items = [];
+    s.speedPPS = BASE_SPEED_PPS;
+    s.basket = {};
 
     // Sync ukuran awal
     if (arenaRef.current) {
@@ -120,12 +118,11 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       s.lastFrame = now;
 
       const { width, height } = arenaSize.current;
-      const bW           = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
-      const basketSpeed  = width * BASKET_SPEED_RATIO;   // px/frame → kita kalikan dt nanti
+      const bW = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
 
       // Gerak keyboard (pakai dt agar konsisten)
       const kbSpeed = width * 0.6 * dt; // 60% lebar per detik
-      if (s.keys.left)  s.basketX = Math.max(0,         s.basketX - kbSpeed);
+      if (s.keys.left) s.basketX = Math.max(0, s.basketX - kbSpeed);
       if (s.keys.right) s.basketX = Math.min(width - bW, s.basketX + kbSpeed);
 
       // Spawn
@@ -138,17 +135,17 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       s.speedPPS = Math.min(MAX_SPEED_PPS, s.speedPPS + ACCEL_PPS2 * dt);
 
       // Gerakkan items
-      const dy         = s.speedPPS * dt;
-      const basketTop  = height - GAME_CONFIG.BASKET_HEIGHT - 10;
-      const caught     = [];
-      const remaining  = [];
+      const dy = s.speedPPS * dt;
+      const basketTop = height - GAME_CONFIG.BASKET_HEIGHT - 10;
+      const caught = [];
+      const remaining = [];
 
       for (const item of s.items) {
         item.y += dy;
 
-        const cx       = item.x + ITEM_SIZE / 2;
-        const inBaskX  = cx >= s.basketX && cx <= s.basketX + bW;
-        const inBaskY  = item.y + ITEM_SIZE >= basketTop && item.y <= basketTop + GAME_CONFIG.BASKET_HEIGHT;
+        const cx = item.x + ITEM_SIZE / 2;
+        const inBaskX = cx >= s.basketX && cx <= s.basketX + bW;
+        const inBaskY = item.y + ITEM_SIZE >= basketTop && item.y <= basketTop + GAME_CONFIG.BASKET_HEIGHT;
 
         if (inBaskX && inBaskY) {
           caught.push(item);
@@ -171,10 +168,10 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       }
 
       onStateChange({
-        items:   s.items.map((i) => ({ ...i })),
+        items: s.items.map((i) => ({ ...i })),
         basketX: s.basketX,
         basketW: bW,
-        basket:  { ...s.basket },
+        basket: { ...s.basket },
       });
 
       s.frameId = requestAnimationFrame(loop);
@@ -182,7 +179,7 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
 
     s.lastFrame = performance.now();
     s.lastSpawn = performance.now();
-    s.frameId   = requestAnimationFrame(loop);
+    s.frameId = requestAnimationFrame(loop);
   }, [arenaRef, onCatch, onJunk, onStateChange]);
 
   const stopLoop = useCallback(() => {
