@@ -37,12 +37,11 @@ export function generateMission() {
 // ─── Game physics ─────────────────────────────────────────────────────────────
 
 export const GAME_CONFIG = {
-  BASKET_WIDTH_RATIO: 0.18,   // lebar keranjang relatif terhadap lebar arena
+  BASKET_WIDTH_RATIO: 0.20,  // lebar keranjang relatif terhadap lebar arena
   BASKET_HEIGHT: 60,
   ITEM_SIZE: 52,
-  INITIAL_SPEED: 2.5,
-  SPEED_INCREMENT: 0.0008,    // makin cepat tiap frame
-  SPAWN_INTERVAL_MS: 900,     // spawn item baru tiap N ms
-  JUNK_PROBABILITY: 0.25,     // 25% kemungkinan junk food
-  BASKET_SPEED_RATIO: 0.018,  // kecepatan geser keranjang relatif lebar arena
+  INITIAL_SPEED: 180,        // px/detik (dipakai di useGameLoop sebagai BASE_SPEED_PPS)
+  SPAWN_INTERVAL_MS: 950,    // spawn item baru tiap N ms
+  JUNK_PROBABILITY: 0.25,    // 25% kemungkinan junk food
+  BASKET_SPEED_RATIO: 0.018, // tidak dipakai langsung, keyboard pakai 60% lebar/detik
 };
