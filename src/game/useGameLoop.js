@@ -41,19 +41,21 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
   // Ukuran arena — diupdate oleh ResizeObserver
   const arenaSize = useRef({ width: 400, height: 600 });
 
-  // ── ResizeObserver: sync ukuran arena setiap kali layout berubah ──────────
+  // ── ResizeObserver: sync ukuran dari canvas.width / canvas.height ─────────
+  // Canvas attribute width/height = pixel fisik (di-set oleh GameArena ResizeObserver)
+  // Kita poll tiap frame via arenaSize agar selalu sinkron
   useEffect(() => {
     if (!arenaRef.current) return;
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
+    const ro = new ResizeObserver(() => {
+      const el = arenaRef.current;
+      if (!el) return;
+      // Gunakan attribute width/height canvas (pixel fisik), bukan CSS size
+      const width  = el.width  || el.getBoundingClientRect().width;
+      const height = el.height || el.getBoundingClientRect().height;
+      if (width > 0 && height > 0) {
         arenaSize.current = { width, height };
-        // Clamp basket agar tidak keluar
         const basketW = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
-        stateRef.current.basketX = Math.min(
-          stateRef.current.basketX,
-          width - basketW
-        );
+        stateRef.current.basketX = Math.min(stateRef.current.basketX, width - basketW);
       }
     });
     ro.observe(arenaRef.current);
@@ -102,10 +104,12 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
     s.speedPPS = BASE_SPEED_PPS;
     s.basket = {};
 
-    // Sync ukuran awal
+    // Sync ukuran awal — pakai canvas.width/height (pixel fisik)
     if (arenaRef.current) {
-      const { width, height } = arenaRef.current.getBoundingClientRect();
-      arenaSize.current = { width, height };
+      const el     = arenaRef.current;
+      const width  = el.width  || el.getBoundingClientRect().width;
+      const height = el.height || el.getBoundingClientRect().height;
+      if (width > 0 && height > 0) arenaSize.current = { width, height };
     }
     const basketW = arenaSize.current.width * GAME_CONFIG.BASKET_WIDTH_RATIO;
     s.basketX = (arenaSize.current.width - basketW) / 2;
@@ -116,6 +120,14 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       // Delta time dalam detik — cap 100ms agar tidak loncat saat tab blur
       const dt = Math.min((now - (s.lastFrame || now)) / 1000, 0.1);
       s.lastFrame = now;
+
+      // Sync ukuran canvas tiap frame (canvas.width/height di-set oleh ResizeObserver di GameArena)
+      if (arenaRef.current) {
+        const el = arenaRef.current;
+        const w  = el.width  || el.getBoundingClientRect().width;
+        const h  = el.height || el.getBoundingClientRect().height;
+        if (w > 0 && h > 0) arenaSize.current = { width: w, height: h };
+      }
 
       const { width, height } = arenaSize.current;
       const bW = width * GAME_CONFIG.BASKET_WIDTH_RATIO;

@@ -5,13 +5,106 @@ import { INGREDIENTS, GAME_CONFIG } from './gameConfig';
 const { ITEM_SIZE, BASKET_HEIGHT } = GAME_CONFIG;
 
 function GameArena({ mission, onLose, onSubmit }) {
-  const arenaRef = useRef(null);
+  const containerRef = useRef(null); // untuk ResizeObserver & touch
+  const canvasRef = useRef(null); // untuk game render
+
   const [renderState, setRenderState] = useState({
-    items: [], basketX: 0, basketW: 80, basket: {},
+    items: [], basketX: 0, basketW: 80, basket: {}, arenaH: 0,
   });
   const [caughtFlash, setCaughtFlash] = useState(null);
-  const [junkFlash,   setJunkFlash]   = useState(false);
+  const [junkFlash, setJunkFlash] = useState(false);
 
+  // ── Canvas draw ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const { items, basketX, basketW } = renderState;
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Clear seluruh canvas setiap frame
+    ctx.clearRect(0, 0, W, H);
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, junkFlash ? 'rgba(239,68,68,0.18)' : 'rgba(10,10,10,0)');
+    bg.addColorStop(1, junkFlash ? 'rgba(239,68,68,0.08)' : 'rgba(30,30,30,0)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Falling items
+    ctx.font = `${ITEM_SIZE * 0.78}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const item of items) {
+      ctx.save();
+      if (item.isJunk) {
+        ctx.shadowColor = 'rgba(239,68,68,0.7)';
+        ctx.shadowBlur = 10;
+      }
+      ctx.fillText(item.emoji, item.x + ITEM_SIZE / 2, item.y + ITEM_SIZE / 2);
+      ctx.restore();
+    }
+
+    // Basket
+    const bTop = H - BASKET_HEIGHT - 10;
+
+    // Rim
+    ctx.save();
+    ctx.fillStyle = '#10b981';
+    ctx.shadowColor = 'rgba(16,185,129,0.5)';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.roundRect(basketX - basketW * 0.05, bTop, basketW * 1.1, 10, 5);
+    ctx.fill();
+    ctx.restore();
+
+    // Body
+    ctx.save();
+    const bodyGrad = ctx.createLinearGradient(0, bTop + 10, 0, bTop + BASKET_HEIGHT);
+    bodyGrad.addColorStop(0, 'rgba(16,185,129,0.2)');
+    bodyGrad.addColorStop(1, 'rgba(16,185,129,0.45)');
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = 'rgba(16,185,129,0.3)';
+    ctx.shadowBlur = 16;
+    ctx.beginPath();
+    ctx.roundRect(basketX, bTop + 10, basketW, BASKET_HEIGHT - 10, [0, 0, 14, 14]);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Basket emoji
+    ctx.font = '1.6rem serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🧺', basketX + basketW / 2, bTop + BASKET_HEIGHT / 2 + 5);
+
+  }, [renderState, junkFlash]);
+
+  // ── Sync canvas size ke container ─────────────────────────────────────────
+  useEffect(() => {
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    if (!container || !canvas) return;
+
+    const ro = new ResizeObserver(() => {
+      const { width, height } = container.getBoundingClientRect();
+      canvas.width = width;
+      canvas.height = height;
+    });
+    ro.observe(container);
+    // Set awal
+    const { width, height } = container.getBoundingClientRect();
+    canvas.width = width;
+    canvas.height = height;
+    return () => ro.disconnect();
+  }, []);
+
+  // ── Game loop callbacks ────────────────────────────────────────────────────
   const handleCatch = useCallback((item) => {
     setCaughtFlash({ emoji: item.emoji, key: item.id + Date.now() });
     setTimeout(() => setCaughtFlash(null), 600);
@@ -30,10 +123,10 @@ function GameArena({ mission, onLose, onSubmit }) {
     startLoop, stopLoop, getBasket,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = useGameLoop({
-    arenaRef,
+    arenaRef: canvasRef,
     mission,
-    onCatch:       handleCatch,
-    onJunk:        handleJunk,
+    onCatch: handleCatch,
+    onJunk: handleJunk,
     onStateChange: handleStateChange,
   });
 
@@ -44,14 +137,14 @@ function GameArena({ mission, onLose, onSubmit }) {
 
   // ── Touch ──────────────────────────────────────────────────────────────────
   const onTouchStart = (e) => handleTouchStart(e.touches[0].clientX);
-  const onTouchMove  = (e) => { e.preventDefault(); handleTouchMove(e.touches[0].clientX); };
-  const onTouchEnd   = ()  => handleTouchEnd();
+  const onTouchMove = (e) => { e.preventDefault(); handleTouchMove(e.touches[0].clientX); };
+  const onTouchEnd = () => handleTouchEnd();
 
   // ── Mouse drag ─────────────────────────────────────────────────────────────
   const mouseDown = useRef(false);
-  const onMouseDown = (e) => { mouseDown.current = true;  handleTouchStart(e.clientX); };
+  const onMouseDown = (e) => { mouseDown.current = true; handleTouchStart(e.clientX); };
   const onMouseMove = (e) => { if (mouseDown.current) handleTouchMove(e.clientX); };
-  const onMouseUp   = ()  => { mouseDown.current = false; handleTouchEnd(); };
+  const onMouseUp = () => { mouseDown.current = false; handleTouchEnd(); };
 
   const handleSubmit = () => { stopLoop(); onSubmit(getBasket()); };
 
@@ -105,9 +198,9 @@ function GameArena({ mission, onLose, onSubmit }) {
         </button>
       </div>
 
-      {/* ── Arena ── */}
+      {/* ── Arena: container + canvas ── */}
       <div
-        ref={arenaRef}
+        ref={containerRef}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -121,40 +214,22 @@ function GameArena({ mission, onLose, onSubmit }) {
           overflow: 'hidden',
           cursor: 'grab',
           touchAction: 'none',
-          /* background flash saat kena junk */
-          background: junkFlash
-            ? 'rgba(239,68,68,0.18)'
-            : 'linear-gradient(180deg, var(--bg-base) 0%, var(--bg-surface) 100%)',
-          transition: 'background 0.15s',
+          background: 'linear-gradient(180deg, var(--bg-base) 0%, var(--bg-surface) 100%)',
         }}
       >
-        {/* Falling items — pakai transform agar posisi tidak bergantung layout */}
-        {renderState.items.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: ITEM_SIZE,
-              height: ITEM_SIZE,
-              /* transform sebagai satu-satunya sumber posisi */
-              transform: `translate(${item.x}px, ${item.y}px)`,
-              willChange: 'transform',
-              fontSize: `${ITEM_SIZE * 0.72}px`,
-              lineHeight: `${ITEM_SIZE}px`,
-              textAlign: 'center',
-              filter: item.isJunk
-                ? 'drop-shadow(0 0 6px rgba(239,68,68,0.7))'
-                : 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
-              pointerEvents: 'none',
-            }}
-          >
-            {item.emoji}
-          </div>
-        ))}
+        {/* Canvas — mengisi penuh container */}
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            top: 0, left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'block',
+          }}
+        />
 
-        {/* Catch pop-up */}
+        {/* Catch pop-up — tetap DOM agar animasi CSS mudah */}
         {caughtFlash && (
           <div
             key={caughtFlash.key}
@@ -165,49 +240,12 @@ function GameArena({ mission, onLose, onSubmit }) {
               fontSize: '2rem',
               animation: 'catchPop 0.6s ease forwards',
               pointerEvents: 'none',
+              zIndex: 10,
             }}
           >
             {caughtFlash.emoji}
           </div>
         )}
-
-        {/* Basket */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 10,
-            left: 0,
-            width: renderState.basketW,
-            height: BASKET_HEIGHT,
-            transform: `translateX(${renderState.basketX}px)`,
-            willChange: 'transform',
-            pointerEvents: 'none',
-          }}
-        >
-          {/* Rim */}
-          <div style={{
-            position: 'absolute', top: 0,
-            width: '110%', left: '-5%',
-            height: '10px',
-            background: '#10b981',
-            borderRadius: '999px',
-            boxShadow: '0 0 10px rgba(16,185,129,0.5)',
-          }} />
-          {/* Body */}
-          <div style={{
-            position: 'absolute', top: '8px',
-            width: '100%', height: 'calc(100% - 8px)',
-            background: 'linear-gradient(180deg, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.45) 100%)',
-            border: '2px solid #10b981',
-            borderTop: 'none',
-            borderRadius: '0 0 1rem 1rem',
-            boxShadow: '0 0 20px rgba(16,185,129,0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.6rem',
-          }}>
-            🧺
-          </div>
-        </div>
 
         <style>{`
           @keyframes catchPop {
