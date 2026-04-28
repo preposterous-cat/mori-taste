@@ -20,6 +20,15 @@ function GameArena({ mission, onLose, onSubmit }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    // reset transform biar tidak numpuk
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // apply DPR scaling
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     const { items, basketX, basketW } = renderState;
     const W = canvas.width;
     const H = canvas.height;
@@ -88,18 +97,18 @@ function GameArena({ mission, onLose, onSubmit }) {
   // ── Sync canvas size ke container (DPR-aware) ─────────────────────────────
   useEffect(() => {
     const container = containerRef.current;
-    const canvas    = canvasRef.current;
+    const canvas = canvasRef.current;
     if (!container || !canvas) return;
 
     const resize = () => {
-      const dpr            = window.devicePixelRatio || 1;
+      const dpr = window.devicePixelRatio || 1;
       const { width, height } = container.getBoundingClientRect();
       // Pixel fisik = CSS size × DPR → tajam di retina & mobile
-      canvas.width         = Math.round(width  * dpr);
-      canvas.height        = Math.round(height * dpr);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       // CSS size tetap agar layout tidak berubah
-      canvas.style.width   = width  + 'px';
-      canvas.style.height  = height + 'px';
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
     };
 
     const ro = new ResizeObserver(resize);
