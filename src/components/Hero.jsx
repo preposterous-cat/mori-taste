@@ -79,7 +79,7 @@ function Hero() {
           <br />
           <span className="gradient-text-gold">Taste</span>
         </h1>
-        <p className="text-gray-300 text-lg md:text-xl font-light max-w-xl mx-auto mb-10 leading-relaxed">
+        <p className="text-white text-lg md:text-xl font-light max-w-xl mx-auto mb-10 leading-relaxed">
           Salad sayur premium dengan bahan-bahan segar pilihan. Nikmati setiap gigitan yang penuh nutrisi dan cita rasa.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
