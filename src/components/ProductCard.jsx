@@ -5,32 +5,32 @@ const accentStyles = {
   emerald: {
     borderHover: 'rgba(16,185,129,0.4)',
     shadowHover: 'rgba(16,185,129,0.2)',
-    tagColor:    '#10b981',
-    btnBg:       '#10b981',
-    btnHover:    '#34d399',
-    btnShadow:   'rgba(16,185,129,0.4)',
+    tagColor: '#10b981',
+    btnBg: '#10b981',
+    btnHover: '#34d399',
+    btnShadow: 'rgba(16,185,129,0.4)',
   },
   gold: {
     borderHover: 'rgba(251,191,36,0.4)',
     shadowHover: 'rgba(251,191,36,0.2)',
-    tagColor:    '#fbbf24',
-    btnBg:       '#f59e0b',
-    btnHover:    '#fbbf24',
-    btnShadow:   'rgba(251,191,36,0.4)',
+    tagColor: '#fbbf24',
+    btnBg: '#f59e0b',
+    btnHover: '#fbbf24',
+    btnShadow: 'rgba(251,191,36,0.4)',
   },
   crimson: {
     borderHover: 'rgba(239,68,68,0.4)',
     shadowHover: 'rgba(239,68,68,0.2)',
-    tagColor:    '#f87171',
-    btnBg:       '#ef4444',
-    btnHover:    '#f87171',
-    btnShadow:   'rgba(239,68,68,0.4)',
+    tagColor: '#f87171',
+    btnBg: '#ef4444',
+    btnHover: '#f87171',
+    btnShadow: 'rgba(239,68,68,0.4)',
   },
 };
 
 const badgeBg = {
   emerald: '#10b981',
-  gold:    '#f59e0b',
+  gold: '#f59e0b',
   crimson: '#ef4444',
 };
 
@@ -112,15 +112,20 @@ function ProductCard({ product, index }) {
               {product.price}
             </p>
           </div>
-          <button
-            className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          <a
+            href={`https://wa.me/6289526794973?text=${encodeURIComponent(
+              `Halo, Mori Taste! Saya ingin Pesan ${product.name}`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg inline-block text-center"
             style={{
               background: accent.btnBg,
               boxShadow: isHovered ? `0 8px 20px ${accent.btnShadow}` : 'none',
             }}
           >
             Pesan
-          </button>
+          </a>
         </div>
       </div>
     </div>
