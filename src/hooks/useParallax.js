@@ -16,7 +16,7 @@ export function useParallax(speed = 0.3, offset = 0) {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (ref.current) {
-            const rect = ref.current.getBoundingClientRect();
+            // const rect = ref.current.getBoundingClientRect();
             const scrolled = window.scrollY;
             const relativeScroll = scrolled - offset;
             setTransform(relativeScroll * speed);

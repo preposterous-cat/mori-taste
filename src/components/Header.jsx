@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '../context/ThemeContext';
+// import { useTheme } from '../context/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 
 function Header() {
   const [scrollY, setScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isDark } = useTheme();
+  // const { isDark } = useTheme();
 
   useEffect(() => {
     let ticking = false;
@@ -33,9 +33,8 @@ function Header() {
 
   return (
     <header
-      className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'glass-dark py-3 shadow-2xl' : 'bg-transparent py-6'
-      }`}
+      className={`fixed w-full top-0 z-50 transition-all duration-500 ${isScrolled ? 'glass-dark py-3 shadow-2xl' : 'bg-transparent py-6'
+        }`}
     >
       <nav className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
         {/* Logo */}
