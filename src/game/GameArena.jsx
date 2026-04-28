@@ -85,22 +85,26 @@ function GameArena({ mission, onLose, onSubmit }) {
 
   }, [renderState, junkFlash]);
 
-  // ── Sync canvas size ke container ─────────────────────────────────────────
+  // ── Sync canvas size ke container (DPR-aware) ─────────────────────────────
   useEffect(() => {
     const container = containerRef.current;
-    const canvas = canvasRef.current;
+    const canvas    = canvasRef.current;
     if (!container || !canvas) return;
 
-    const ro = new ResizeObserver(() => {
+    const resize = () => {
+      const dpr            = window.devicePixelRatio || 1;
       const { width, height } = container.getBoundingClientRect();
-      canvas.width = width;
-      canvas.height = height;
-    });
+      // Pixel fisik = CSS size × DPR → tajam di retina & mobile
+      canvas.width         = Math.round(width  * dpr);
+      canvas.height        = Math.round(height * dpr);
+      // CSS size tetap agar layout tidak berubah
+      canvas.style.width   = width  + 'px';
+      canvas.style.height  = height + 'px';
+    };
+
+    const ro = new ResizeObserver(resize);
     ro.observe(container);
-    // Set awal
-    const { width, height } = container.getBoundingClientRect();
-    canvas.width = width;
-    canvas.height = height;
+    resize();
     return () => ro.disconnect();
   }, []);
 
