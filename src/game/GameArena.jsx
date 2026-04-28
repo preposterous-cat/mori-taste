@@ -19,8 +19,6 @@ function GameArena({ mission, onLose, onSubmit }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
-    const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
 
     // reset transform biar tidak numpuk
