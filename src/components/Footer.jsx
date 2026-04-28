@@ -69,7 +69,7 @@ function Footer() {
               ].map((social) => (
                 <a
                   key={social.label}
-                  href="#"
+                  href="https://example.com"
                   className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-smooth hover:text-white"
                   style={{
                     background: 'var(--bg-card)',
