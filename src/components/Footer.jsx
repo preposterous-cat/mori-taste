@@ -14,22 +14,12 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-10 h-10">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 via-yellow-400 to-emerald-500" />
-                <div
-                  className="absolute inset-0.5 rounded-full flex items-center justify-center"
-                  style={{ background: 'var(--bg-base)' }}
-                >
-                  <span className="font-display font-bold text-lg gradient-text-gold">M</span>
-                </div>
-              </div>
-              <div>
-                <span className="font-display font-bold text-xl tracking-wide" style={{ color: 'var(--text-primary)' }}>
-                  Mori Taste
-                </span>
-                <p className="text-xs text-emerald-500 tracking-widest uppercase">Fresh Salad</p>
-              </div>
+            <div className="flex items-center mb-4">
+              <img
+                src="/logo-mori-taste.png"
+                alt="Mori Taste"
+                className={`h-24 w-auto object-contain`}
+              />
             </div>
             <p className="text-sm leading-relaxed max-w-xs" style={{ color: 'var(--text-muted)' }}>
               Salad sayur premium dengan bahan-bahan segar pilihan. Sehat, lezat, dan terjangkau untuk semua kalangan.

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useRevealOnScroll } from '../hooks/useParallax';
 
 const contactInfo = [
-  { icon: '📍', label: 'Alamat',    value: 'Jakarta, Indonesia' },
-  { icon: '📞', label: 'Telepon',   value: '+62 812-3456-7890' },
-  { icon: '✉️', label: 'Email',     value: 'hello@moritaste.com' },
-  { icon: '🕐', label: 'Jam Buka',  value: 'Setiap Hari 07.00 – 21.00' },
+  { icon: '📍', label: 'Alamat', value: 'Palembang, Indonesia' },
+  { icon: '📞', label: 'Telepon', value: '+62 895-2679-4973 / +62 851-7323-6321' },
+  { icon: '✉️', label: 'Email', value: 'polypteruschan@gmail.com' },
+  { icon: '🕐', label: 'Hari PO', value: 'Senin & Kamis' },
 ];
 
 function Contact() {
@@ -95,8 +95,8 @@ function Contact() {
           >
             <div className="space-y-5">
               {[
-                { name: 'name',    label: 'Nama',  type: 'text',  placeholder: 'Nama lengkap Anda' },
-                { name: 'email',   label: 'Email', type: 'email', placeholder: 'email@anda.com' },
+                { name: 'name', label: 'Nama', type: 'text', placeholder: 'Nama lengkap Anda' },
+                { name: 'email', label: 'Email', type: 'email', placeholder: 'email@anda.com' },
               ].map((field) => (
                 <div key={field.name}>
                   <label className="text-xs uppercase tracking-widest mb-2 block" style={{ color: 'var(--text-muted)' }}>

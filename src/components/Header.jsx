@@ -38,22 +38,12 @@ function Header() {
     >
       <nav className="max-w-7xl mx-auto px-6 lg:px-8 flex justify-between items-center">
         {/* Logo */}
-        <a href="#hero" className="flex items-center gap-3 group">
-          <div className="relative w-10 h-10">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 via-yellow-400 to-emerald-500 animate-pulse-glow" />
-            <div
-              className="absolute inset-0.5 rounded-full flex items-center justify-center"
-              style={{ background: 'var(--bg-base)' }}
-            >
-              <span className="font-display font-bold text-lg gradient-text-gold">M</span>
-            </div>
-          </div>
-          <div>
-            <span className="font-display font-bold text-xl tracking-wide" style={{ color: 'var(--text-primary)' }}>
-              Mori Taste
-            </span>
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-light">Fresh Salad</p>
-          </div>
+        <a href="#hero" className="flex items-center gap-2 group">
+          <img
+            src="/logo-mori-taste.png"
+            alt="Mori Taste"
+            className={`${isScrolled ? 'h-16' : 'h-16'} w-auto object-contain transition-transform duration-300 group-hover:scale-105`}
+          />
         </a>
 
         {/* Desktop Nav */}
@@ -63,7 +53,7 @@ function Header() {
               key={link.label}
               href={link.href}
               className="text-sm font-medium transition-smooth tracking-wide relative group hover:text-emerald-500"
-              style={{ color: 'var(--text-secondary)' }}
+              style={{ color: `${isScrolled ? 'var(--text-secondary)' : 'white'}` }}
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 w-0 h-px bg-emerald-500 transition-all duration-300 group-hover:w-full" />
