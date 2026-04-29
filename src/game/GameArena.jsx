@@ -22,14 +22,15 @@ function GameArena({ mission, onLose, onSubmit }) {
     const dpr = window.devicePixelRatio || 1;
 
     // reset transform biar tidak numpuk
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     // apply DPR scaling
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const { items, basketX, basketW } = renderState;
-    const W = canvas.width;
-    const H = canvas.height;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width;
+    const H = rect.height;
 
     // Clear seluruh canvas setiap frame
     ctx.clearRect(0, 0, W, H);

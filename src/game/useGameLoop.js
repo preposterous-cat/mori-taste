@@ -50,8 +50,11 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       const el = arenaRef.current;
       if (!el) return;
       // Gunakan attribute width/height canvas (pixel fisik), bukan CSS size
-      const width  = el.width  || el.getBoundingClientRect().width;
-      const height = el.height || el.getBoundingClientRect().height;
+      const rect = el.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      // const width  = el.width  || el.getBoundingClientRect().width;
+      // const height = el.height || el.getBoundingClientRect().height;
       if (width > 0 && height > 0) {
         arenaSize.current = { width, height };
         const basketW = width * GAME_CONFIG.BASKET_WIDTH_RATIO;
@@ -106,9 +109,12 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
 
     // Sync ukuran awal — pakai canvas.width/height (pixel fisik)
     if (arenaRef.current) {
-      const el     = arenaRef.current;
-      const width  = el.width  || el.getBoundingClientRect().width;
-      const height = el.height || el.getBoundingClientRect().height;
+      const el = arenaRef.current;
+      const rect = el.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      // const width = el.width || el.getBoundingClientRect().width;
+      // const height = el.height || el.getBoundingClientRect().height;
       if (width > 0 && height > 0) arenaSize.current = { width, height };
     }
     const basketW = arenaSize.current.width * GAME_CONFIG.BASKET_WIDTH_RATIO;
@@ -124,8 +130,11 @@ export function useGameLoop({ arenaRef, mission, onCatch, onJunk, onStateChange 
       // Sync ukuran canvas tiap frame (canvas.width/height di-set oleh ResizeObserver di GameArena)
       if (arenaRef.current) {
         const el = arenaRef.current;
-        const w  = el.width  || el.getBoundingClientRect().width;
-        const h  = el.height || el.getBoundingClientRect().height;
+        const rect = el.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+        // const w = el.width || el.getBoundingClientRect().width;
+        // const h = el.height || el.getBoundingClientRect().height;
         if (w > 0 && h > 0) arenaSize.current = { width: w, height: h };
       }
 
