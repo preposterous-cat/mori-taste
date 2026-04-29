@@ -19,8 +19,8 @@ function GameArena({ mission, onLose, onSubmit }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     const dpr = window.devicePixelRatio || 1;
-
     // reset transform biar tidak numpuk
     // ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -43,7 +43,8 @@ function GameArena({ mission, onLose, onSubmit }) {
     ctx.fillRect(0, 0, W, H);
 
     // Falling items
-    ctx.font = `${ITEM_SIZE * 0.78}px serif`;
+    // ctx.font = `${ITEM_SIZE * 0.78}px serif`;
+    ctx.font = `${ITEM_SIZE * 0.9}px system-ui`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     for (const item of items) {
@@ -238,6 +239,7 @@ function GameArena({ mission, onLose, onSubmit }) {
             width: '100%',
             height: '100%',
             display: 'block',
+            imageRendering: 'pixelated', // 🔥 tambahkan ini
           }}
         />
 
